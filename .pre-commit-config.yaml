@@ -1,0 +1,98 @@
+# Конфигурация pre-commit hooks для локальной разработки
+# Установка: pip install pre-commit && pre-commit install
+# Ручной запуск: pre-commit run --all-files
+
+repos:
+  # Общие проверки файлов
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      # Предотвратить коммит больших файлов
+      - id: check-added-large-files
+        args: ['--maxkb=5000']
+
+      # Проверить конфликты слияния
+      - id: check-merge-conflict
+
+      # Проверить на файлы с учётными данными (`.env`, ключи и т.д.)
+      - id: detect-private-key
+        exclude: \.example$
+
+      # Проверить синтаксис YAML
+      - id: check-yaml
+        args: ['--unsafe']
+
+      # Проверить синтаксис JSON
+      - id: check-json
+
+      # Проверить что файлы - валидный TOML
+      - id: check-toml
+
+      # Проверить что нет смешанных окончаний строк
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+
+      # Удалить рахвосты пробелов
+      - id: trailing-whitespace
+
+      # Исправить окончания файлов
+      - id: end-of-file-fixer
+
+      # Проверить синтаксис Python
+      - id: check-ast
+
+      # Проверить на debugger импорты в Python
+      - id: debug-statements
+
+  # Dart/Flutter специфичные проверки
+  - repo: local
+    hooks:
+      - id: flutter-format
+        name: Форматирование Flutter
+        entry: dart format
+        language: system
+        types: [dart]
+        pass_filenames: true
+
+      - id: flutter-analyze
+        name: Анализ Flutter
+        entry: flutter analyze
+        language: system
+        types: [dart]
+        pass_filenames: false
+        stages: [pre-commit]
+
+  # Обнаружение секретов с помощью TruffleHog
+  # - repo: https://github.com/trufflesecurity/trufflehog
+  #   rev: v3.63.0
+  #   hooks:
+  #     - id: trufflehog
+  #       name: TruffleHog — Обнаружение секретов
+  #       types: [text]
+  #       # Исключить файлы шаблонов
+  #       exclude: \.example$|\.template$
+
+  # Git hooks для безопасности
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.0
+    hooks:
+      - id: gitleaks
+        name: Gitleaks — Обнаружение учётных данных
+
+# Настройка
+default_stages: [pre-commit]
+fail_fast: false
+
+# Файлы для игнорирования
+exclude: |
+  (?x)^(
+    pubspec\.lock|
+    android/gradle|
+    build/|
+    \.dart_tool/|
+    ios/Pods|
+    web/|
+    macos/|
+    windows/|
+    linux/
+  )$

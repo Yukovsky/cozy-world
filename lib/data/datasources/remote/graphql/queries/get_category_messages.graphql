@@ -1,0 +1,14 @@
+query CategoryMessages($category: String, $read: Boolean) {
+  messagesCollection(
+    filter: {and: [{category: {eq: $category}}], is_read: {eq: $read}}
+  ) {
+    edges {
+      node {
+        message_id
+        type
+        content
+        category
+      }
+    }
+  }
+}

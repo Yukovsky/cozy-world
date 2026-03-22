@@ -1,0 +1,182 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  analyze:
+    name: Анализ и Linting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Получить исходный код
+        uses: actions/checkout@v4
+
+      - name: Установить Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+          channel: 'stable'
+
+      - name: Получить зависимости
+        run: flutter pub get
+
+      - name: Запустить статический анализ
+        run: flutter analyze
+
+      - name: Проверить форматирование
+        run: dart format --set-exit-if-changed .
+
+  test:
+    name: Набор тестов
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Получить исходный код
+        uses: actions/checkout@v4
+
+      - name: Установить Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+          channel: 'stable'
+
+      - name: Получить зависимости
+        run: flutter pub get
+
+      - name: Запустить тесты
+        run: flutter test --coverage
+
+      - name: Загрузить покрытие в Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+
+  security:
+    name: Сканирование безопасности
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Получить исходный код
+        uses: actions/checkout@v4
+
+      - name: Запустить сканер уязвимостей Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Загрузить результаты Trivy на вкладку безопасности GitHub
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  build-android:
+    name: Сборка Android (Debug)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - channel: stable
+            version: '3.x'
+
+    steps:
+      - name: Получить исходный код
+        uses: actions/checkout@v4
+
+      - name: Установить Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ matrix.version }}
+          channel: ${{ matrix.channel }}
+
+      - name: Получить зависимости
+        run: flutter pub get
+
+      - name: Собрать APK (debug)
+        run: |
+          flutter build apk --debug \
+            --dart-define=apiKey=TEST_KEY \
+            --dart-define=endPointUrl=https://example.com/graphql/v1
+        env:
+          FLUTTER_SUPPRESS_ANALYTICS: true
+
+      - name: Загрузить артефакт APK
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cozy-world-debug.apk
+          path: build/app/outputs/apk/debug/app-debug.apk
+          retention-days: 7
+
+  web-check:
+    name: Проверка Web Target
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - name: Получить исходный код
+        uses: actions/checkout@v4
+
+      - name: Установить Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+          channel: 'stable'
+
+      - name: Получить зависимости
+        run: flutter pub get
+
+      - name: Включить поддержку web
+        run: flutter config --enable-web
+
+      - name: Собрать web
+        run: |
+          flutter build web --debug \
+            --dart-define=apiKey=TEST_KEY \
+            --dart-define=endPointUrl=https://example.com/graphql/v1
+
+  dependency-check:
+    name: Проверка зависимостей
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - name: Получить исходный код
+        uses: actions/checkout@v4
+
+      - name: Установить Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+          channel: 'stable'
+
+      - name: Получить зависимости
+        run: flutter pub get
+
+      - name: Проверить устаревшие зависимости
+        run: flutter pub outdated
+
+      - name: Проверить на уязвимости безопасности
+        run: flutter pub outdated --mode=null-safety
+
+status:
+  name: Статус CI
+  runs-on: ubuntu-latest
+  needs: [analyze, test, security, build-android]
+  if: always()
+
+  steps:
+    - name: Проверить статус CI
+      run: |
+        if [[ "${{ needs.analyze.result }}" != "success" || "${{ needs.test.result }}" != "success" ]]; then
+          echo "::error::CI не пройден"
+          exit 1
+        fi

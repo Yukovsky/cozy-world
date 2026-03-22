@@ -1,0 +1,110 @@
+# === РАЗНОЕ ===
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# === IDE И РЕДАКТОРЫ ===
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# VS Code — обычно можно включить, но закомментирован для гибкости
+# .vscode/
+
+# === СБОРКА И ЗАВИСИМОСТИ ===
+# Flutter/Dart/Pub кэш и артефакты
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+pubspec.lock
+
+# Выходные файлы сборки
+/build/
+/dist/
+
+# Покрытие тестами
+/coverage/
+
+# Генерируемый код (Firebase, JSON сериализаторы, protobuf и т.д.)
+# Примечание: Некоторые генераторы могут нужно хранить; отрегулируйте по необходимости
+**/generated/
+lib/generated/
+
+# Документация
+/doc/api/
+
+# Платформо-специфичные директории сборки (храните в репо для воспроизводимости + CI)
+# Раскомментируйте только если хотите их исключить полностью
+# /android/
+# /ios/
+# /linux/
+# /macos/
+# /windows/
+# /web/
+
+# Android-специфичные артефакты сборки (безопасно игнорировать)
+android/app/debug/
+android/app/profile/
+android/app/release/
+
+# === ОКРУЖЕНИЕ И СЕКРЕТЫ (КРИТИЧНО) ===
+# Никогда не коммитьте реальные файлы окружения — используйте .example шаблоны
+.env
+.env.local
+.env.*.local
+lib/config/.env
+
+# Android keystore и параметры подписи
+# ВАЖНО: Всегда генерируйте локально из android/key.properties.example
+android/key.properties
+android/**/*.keystore
+android/**/*.jks
+*.keystore
+*.jks
+
+# Файлы конфигурации Firebase (если используется)
+google-services.json
+GoogleService-Info.plist
+
+# === ПЛАТФОРМО/CI СПЕЦИФИЧНОЕ ===
+# Gradle
+.gradle/
+gradle-wrapper.jar (опционально — обычно безопасно включить)
+
+# Xcode
+xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/
+
+# iOS
+Pods/
+Podfile.lock
+
+# === ОТЧЁТЫ И АРТЕФАКТЫ ===
+*.hprof
+
+# private реализации
+packages/private_app_assets
+packages/private_dates_impl
+packages/private_strings_impl
+
+pubspec_overrides.yaml
+
+# Временно исключены test из git
+/test/
+
+# md-файлы, не нуждающиеся в публикации
+PRE_RELEASE_CHECKLIST.md

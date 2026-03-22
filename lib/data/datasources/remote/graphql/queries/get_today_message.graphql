@@ -1,0 +1,19 @@
+query TodayMessage($day: Date!) {
+  messagesCollection(
+    filter: {
+      and: [
+        {on_day: {eq: $day}},
+        {category: {eq: "daily"}}
+      ]
+    }
+  ) {
+    edges {
+      node {
+        message_id
+        on_day
+        type
+        content
+      }
+    }
+  }
+}

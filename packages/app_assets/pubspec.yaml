@@ -1,0 +1,15 @@
+name: app_assets
+version: 1.0.0
+description: App assets for Cozy World project.
+publish_to: none
+
+environment:
+  sdk: ^3.10.3
+
+dependencies: {}
+
+dev_dependencies: {}
+
+flutter:
+  assets:
+    - assets/photos/

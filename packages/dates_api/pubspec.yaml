@@ -1,0 +1,11 @@
+name: dates_api
+version: 1.0.0
+description: Dates api for Cozy World project.
+publish_to: none
+
+environment:
+  sdk: ^3.10.3
+
+dependencies:
+
+dev_dependencies:

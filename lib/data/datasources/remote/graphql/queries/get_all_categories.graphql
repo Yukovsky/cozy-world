@@ -1,0 +1,10 @@
+query Categories {
+  unique_message_categoryCollection  {
+    edges {
+      node {
+        category
+        is_read
+      }
+    }
+  }
+}

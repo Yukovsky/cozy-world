@@ -1,0 +1,6 @@
+# Скопируйте этот файл в android/key.properties и заполните значения. НЕ коммитить реальные файлы.
+# Храните файл keystore вне системы контроля версий и указывайте его абсолютный путь локально.
+storePassword=YOUR_STORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=YOUR_KEY_ALIAS
+storeFile=/absolute/path/to/keystore.jks

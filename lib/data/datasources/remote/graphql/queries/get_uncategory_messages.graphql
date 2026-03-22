@@ -1,0 +1,14 @@
+query UncategoryMessages($read: Boolean!) {
+  messagesCollection(
+    filter: {and: [{category: {is: NULL}}], is_read: {eq: $read}}
+  ) {
+    edges {
+      node {
+        message_id
+        type
+        content
+        category
+      }
+    }
+  }
+}

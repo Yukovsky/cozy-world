@@ -1,0 +1,13 @@
+name: strings_impl
+version: 1.0.0
+description: Strings implementation for Cozy Wolrd project.
+publish_to: none
+
+environment:
+  sdk: ^3.10.3
+
+dependencies:
+  strings_api:
+    path: ../strings_api
+
+dev_dependencies:

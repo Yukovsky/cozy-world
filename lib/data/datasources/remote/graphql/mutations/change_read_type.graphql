@@ -1,0 +1,8 @@
+mutation ChangeReadType($id: Int!, $read: Boolean!) {
+  updatemessagesCollection (
+  	set: {is_read: $read}
+  	filter: {message_id: {eq: $id}}
+  ) {
+    affectedCount
+  }
+}

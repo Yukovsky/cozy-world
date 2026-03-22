@@ -1,0 +1,11 @@
+name: strings_api
+version: 1.0.0
+description: Strings api for Cozy Wolrd project.
+publish_to: none
+
+environment:
+  sdk: ^3.10.3
+
+dependencies:
+
+dev_dependencies:

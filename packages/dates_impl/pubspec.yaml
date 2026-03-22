@@ -1,0 +1,13 @@
+name: dates_impl
+version: 1.0.0
+description: Dates implementation for Cozy World project.
+publish_to: none
+
+environment:
+  sdk: ^3.10.3
+
+dependencies:
+  dates_api:
+    path: ../dates_api
+
+dev_dependencies:

@@ -1,0 +1,79 @@
+name: Проверки PR
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  pr-validation:
+    name: Валидация PR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Получить исходный код
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Проверить формат заголовка PR
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          # Проверить формат conventional commit: type(scope): description
+          if [[ ! "$PR_TITLE" =~ ^(feat|fix|docs|style|refactor|test|chore|ci)(\(.+\))?:\ .+ ]]; then
+            echo "::warning::Заголовок PR не следует формату conventional commits: type(scope): description"
+            echo "Примеры: 'feat(auth): добавить логин', 'fix(ui): выравнивание кнопки', 'docs: обновить README'"
+          fi
+
+      - name: Проверить описание PR
+        run: |
+          if [ -z "${{ github.event.pull_request.body }}" ]; then
+            echo "::error::Описание PR пусто. Пожалуйста, предоставьте подробное описание изменений."
+            exit 1
+          fi
+
+      - name: Проверить на breaking changes
+        run: |
+          if grep -iq "BREAKING CHANGE" <<< "${{ github.event.pull_request.body }}"; then
+            echo "::notice::Этот PR содержит breaking changes. Убедитесь что запланирована версия bump."
+          fi
+
+      - name: Проверить изменённые файлы
+        run: |
+          echo "Изменённые файлы в этом PR:"
+          git diff --name-only ${{ github.event.pull_request.base.sha }}..HEAD
+
+          # Предупредить если чувствительные файлы изменены
+          if git diff --name-only ${{ github.event.pull_request.base.sha }}..HEAD | grep -E "\.env|key\.properties|\.jks|\.keystore|google-services"; then
+            echo "::warning::Этот PR изменяет чувствительные/конфигурационные файлы. Убедитесь что утечки секретов нет!"
+          fi
+
+      - name: Проверка CHANGELOG
+        run: |
+          # Опционально проверить обновления CHANGELOG на main ветке
+          if [ "${{ github.event.pull_request.base.ref }}" == "main" ]; then
+            if ! git diff --name-only ${{ github.event.pull_request.base.sha }}..HEAD | grep -q "CHANGELOG"; then
+              echo "::warning::PR нацелен на main ветку, должно быть обновление CHANGELOG"
+            fi
+          fi
+
+  size-limit:
+    name: Проверка размера PR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Получить исходный код
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Рассчитать размер PR
+        run: |
+          ADDITIONS=$(git diff --shortstat ${{ github.event.pull_request.base.sha }}..HEAD | grep -oP '^\d+ files? changed, \K\d+(?= insertions?)' || echo "0")
+          DELETIONS=$(git diff --shortstat ${{ github.event.pull_request.base.sha }}..HEAD | grep -oP 'insertions?\(.\),\ K\d+(?= deletions?)' || echo "0")
+          TOTAL=$((ADDITIONS + DELETIONS))
+
+          echo "Размер PR: +$ADDITIONS -$DELETIONS (Δ $TOTAL)"
+
+          if [ $TOTAL -gt 1000 ]; then
+            echo "::warning::Обнаружен большой PR ($TOTAL строк изменено). Рассмотрите возможность разделения на несколько PR для более лёгкого review."
+          fi
