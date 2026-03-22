@@ -38,12 +38,6 @@ repos:
       # Исправить окончания файлов
       - id: end-of-file-fixer
 
-      # Проверить синтаксис Python
-      - id: check-ast
-
-      # Проверить на debugger импорты в Python
-      - id: debug-statements
-
   # Dart/Flutter специфичные проверки
   - repo: local
     hooks:

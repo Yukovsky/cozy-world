@@ -4,12 +4,6 @@
 [![Dart](https://img.shields.io/badge/Dart-3.10-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-# Cozy World
-
-[![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev/)
-[![Dart](https://img.shields.io/badge/Dart-3.10-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
-
 **Cozy World** — это Flutter-приложение для управления важными датами, ежедневными сообщениями поддержки, категоризированным контентом и воспоминаниями. Проект демонстрирует best practices чистой архитектуры (Clean Architecture), работу с GraphQL, управление состоянием и локальное хранилище в Flutter.
 
 
