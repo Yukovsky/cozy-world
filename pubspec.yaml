@@ -1,7 +1,7 @@
 name: cozy_world
 description: "A Flutter application for managing important dates, daily support messages, categorized content, and memories. Demonstrates clean architecture, GraphQL integration, state management with GetX, and secure local storage."
 publish_to: 'none'
-version: 1.2.0+3
+version: 1.2.1+4
 
 environment:
   sdk: ^3.10.3
