@@ -217,7 +217,7 @@ class _BackCardSide extends GetView<ChangeReadStatusController> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              child: Text(
+              child: SelectableText(
                 message.content,
                 style: theme.textTheme.bodyMedium,
                 textAlign: TextAlign.start,
